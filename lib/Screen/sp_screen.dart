@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'AccountManagment/signIn.dart';
 import 'Widget/applogo.dart';
 import 'Widget/main_bg_sceen.dart';
-import 'homepage.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

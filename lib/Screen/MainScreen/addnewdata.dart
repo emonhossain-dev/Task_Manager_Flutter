@@ -1,28 +1,22 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:task_manager/Screen/AccountManagment/Forget_password/forgetByEmail.dart';
-import 'package:task_manager/Screen/AccountManagment/signUp.dart';
-import 'package:task_manager/Screen/MainScreen/homepage.dart';
+import 'package:task_manager/Screen/Widget/appbar.dart';
 
 import '../Widget/main_bg_sceen.dart';
+import 'homepage.dart';
 
-class SingIn extends StatefulWidget {
-  const SingIn({super.key});
-  static const String name = "/sign-in";
+class AddNewData extends StatelessWidget {
+  AddNewData({super.key});
 
-  @override
-  State<SingIn> createState() => _SignInState();
-}
-
-class _SignInState extends State<SingIn> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  static const String name = "/add-new-data";
+  final TextEditingController _subjectController = TextEditingController();
+  final TextEditingController _discribtionController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      appBar: CustomAppBar(),
       body: BackgroundScreen(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -39,15 +33,15 @@ class _SignInState extends State<SingIn> {
                       children: [
                         SizedBox(height: 40),
                         Text(
-                          "Get Started With",
+                          "Add New Task",
                           style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
                         ),
                         SizedBox(height: 20),
                         TextFormField(
-                          controller: _emailController,
+                          controller: _subjectController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
-                            hintText: "Email",
+                            hintText: "Subject",
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -57,17 +51,16 @@ class _SignInState extends State<SingIn> {
                         ),
                         SizedBox(height: 20),
                         TextFormField(
-                          controller: _passwordController,
-                          keyboardType: TextInputType.text,
+                          controller: _discribtionController,
+                          maxLines: 6,
                           decoration: InputDecoration(
-                            hintText: "Password",
+                            hintText: "Discribtion",
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
                             filled: true,
                             fillColor: Colors.white.withOpacity(0.8),
                           ),
-                          obscureText: true,
                         ),
                         SizedBox(height: 20),
                         ElevatedButton(
@@ -83,36 +76,6 @@ class _SignInState extends State<SingIn> {
                           },
                           child: Icon(Icons.navigate_next, color: Colors.white),
                         ),
-                        SizedBox(height: 40),
-                        Center(
-                          child: Column(
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(context, ForgetByEmail.name);
-                                },
-                                child: Text("Forget Password ?", style: TextStyle(color: Colors.grey)),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: "Don't have an account? ",
-                                  style: TextStyle(color: Colors.black54),
-                                  children: [
-                                    TextSpan(
-                                      text: "Sign Up",
-                                      style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () {
-                                          Navigator.pushNamedAndRemoveUntil(context, SignUp.name, (_) => false);
-                                        },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 20),
                       ],
                     ),
                   ),
@@ -123,12 +86,5 @@ class _SignInState extends State<SingIn> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
   }
 }

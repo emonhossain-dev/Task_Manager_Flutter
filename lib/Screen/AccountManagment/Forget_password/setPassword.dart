@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:task_manager/Screen/AccountManagment/Forget_password/pinveritication.dart';
 
 import '../../Widget/main_bg_sceen.dart';
 import '../signIn.dart';

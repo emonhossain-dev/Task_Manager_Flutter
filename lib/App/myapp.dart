@@ -3,9 +3,10 @@ import 'package:task_manager/Screen/AccountManagment/Forget_password/forgetByEma
 import 'package:task_manager/Screen/AccountManagment/Forget_password/pinveritication.dart';
 import 'package:task_manager/Screen/AccountManagment/Forget_password/setPassword.dart';
 import 'package:task_manager/Screen/AccountManagment/signUp.dart';
+import 'package:task_manager/Screen/MainScreen/addnewdata.dart';
 
 import '../Screen/AccountManagment/signIn.dart';
-import '../Screen/homepage.dart';
+import '../Screen/MainScreen/homepage.dart';
 import '../Screen/sp_screen.dart';
 
 class MyApp extends StatelessWidget {
@@ -35,11 +36,12 @@ class MyApp extends StatelessWidget {
             color: Colors.grey
           ),
 
-
-
-
-
         ),
+
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.green,
+        )
+
       ),
 
 
@@ -62,6 +64,10 @@ class MyApp extends StatelessWidget {
           widget = PinVerification();
         } else if(settings.name == SetPassword.name){
           widget = SetPassword();
+        } else if(settings.name == Homepage.name){
+          widget = SetPassword();
+        } else if(settings.name == AddNewData.name){
+          widget = AddNewData();
         }
 
         return MaterialPageRoute(builder: (_)=>widget);
