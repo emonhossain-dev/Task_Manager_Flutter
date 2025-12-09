@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../Widget/itemlist.dart';
+
 class CanceledPage extends StatefulWidget {
   const CanceledPage({super.key});
 
@@ -10,6 +12,17 @@ class CanceledPage extends StatefulWidget {
 class _CanceledPageState extends State<CanceledPage> {
   @override
   Widget build(BuildContext context) {
-    return Text("Cenceled");
+    return Scaffold(
+
+      body: ListView.builder(
+
+        itemCount: 10,
+        itemBuilder: (context, index) {
+          return Item_List("Canceled");
+
+        },
+      ),
+
+    );
   }
 }

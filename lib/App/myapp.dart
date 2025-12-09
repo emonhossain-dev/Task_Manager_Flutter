@@ -7,6 +7,7 @@ import 'package:task_manager/Screen/MainScreen/addnewdata.dart';
 
 import '../Screen/AccountManagment/signIn.dart';
 import '../Screen/MainScreen/homepage.dart';
+import '../Screen/MainScreen/profile.dart';
 import '../Screen/sp_screen.dart';
 
 class MyApp extends StatelessWidget {
@@ -68,6 +69,8 @@ class MyApp extends StatelessWidget {
           widget = SetPassword();
         } else if(settings.name == AddNewData.name){
           widget = AddNewData();
+        }else if(settings.name == ProfilePage.name){
+          widget = ProfilePage();
         }
 
         return MaterialPageRoute(builder: (_)=>widget);

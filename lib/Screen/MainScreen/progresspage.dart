@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../Widget/itemlist.dart';
+
 class ProgressPage extends StatefulWidget {
   const ProgressPage({super.key});
 
@@ -10,6 +12,17 @@ class ProgressPage extends StatefulWidget {
 class _ProgressPageState extends State<ProgressPage> {
   @override
   Widget build(BuildContext context) {
-    return Text("ProgressPage");
+    return Scaffold(
+
+      body: ListView.builder(
+
+        itemCount: 10,
+        itemBuilder: (context, index) {
+          return Item_List("Progress");
+
+        },
+      ),
+
+    );
   }
 }
