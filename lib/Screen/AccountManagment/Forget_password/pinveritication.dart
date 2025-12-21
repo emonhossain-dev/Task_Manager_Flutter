@@ -1,8 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_manager/Screen/AccountManagment/Forget_password/setPassword.dart';
+import 'package:task_manager/Screen/MainScreen/homepage.dart';
 
+import '../../../Api Integration/Base_url.dart';
 import '../../Widget/main_bg_sceen.dart';
 import '../signIn.dart';
 
@@ -57,6 +61,7 @@ class _PinVerificationState extends State<PinVerification> {
                           child: Pinput(
                             controller: _pinController,
                             forceErrorState: true,
+                            length: 6, // 🔥 এখানেই 6 digit
                             pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
                             keyboardType: TextInputType.number,
 
@@ -81,8 +86,7 @@ class _PinVerificationState extends State<PinVerification> {
                             ),
 
                             onPressed: (){
-
-                              Navigator.pushNamed(context, SetPassword.name);
+                              RegisterCodeVerify();
                             }, child:
                         Icon(Icons.navigate_next, color: Colors.white,)
 
@@ -129,6 +133,172 @@ class _PinVerificationState extends State<PinVerification> {
     // TODO: implement dispose
     _pinController.dispose();
     super.dispose();
+  }
+
+
+  void RegisterCodeVerify() async {
+
+
+    final prefs = await SharedPreferences.getInstance();
+    String? email = await prefs.getString('user_email');
+    String _pinS = _pinController.text.trim();
+
+
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: BaseUrl().BASEURL,
+        followRedirects: false, // temporary
+        validateStatus: (status) {
+          return status! < 500; // 302 won't throw
+        },
+      ),
+    );
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+    };
+
+    Map<String, String> body = {
+      "email": ?email,
+      "code": _pinS,
+
+    };
+
+    try {
+      Response response = await dio.post(
+        BaseUrl().REGISTER_VERIFY_CODE_URL,
+        data: body,
+        options: Options(headers: headers),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // JSON response
+        var res = response.data;
+
+        String message = res['message'];
+
+        print(message);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            duration: const Duration(seconds: 1),
+          ),
+        );
+
+
+        _RegisterComplete();
+        
+        
+      } else {
+        print("Error: ${response.statusCode}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: ${response.statusCode}")),
+        );
+      }
+    } catch (e) {
+      print("Exception: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Exception: $e")));
+    }
+  }
+
+
+
+
+  void _RegisterComplete() async {
+    final prefs = await SharedPreferences.getInstance();
+
+
+    String? _firstnameS =  await prefs.getString('user_firstname');
+    String? _lastNameS = await prefs.getString('user_lastname');
+    String? _emailS =  await prefs.getString('user_email');
+    String? _numberS = await prefs.getString('user_number');
+    String? _passwordS =  await prefs.getString('user_password');
+
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: BaseUrl().BASEURL,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        sendTimeout: const Duration(seconds: 30),
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+      ),
+    );
+
+    Map<String, String> body = {
+      "firstname": ?_firstnameS,
+      "lastname": ?_lastNameS,
+      "email": ?_emailS,
+      "mobile": ?_numberS,
+      "password": ?_passwordS,
+      "password_confirmation": ?_passwordS,
+    };
+
+    try {
+      Response response = await dio.post(
+        BaseUrl().REGISTERCOMPLETE_URL,
+        data: body,
+
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // JSON response
+        var res = response.data;
+
+        String status = res['status'];
+        String token = res['token'];
+        String? message = response.data?['message'];
+        
+        print(status);
+        print(message);
+        print(token);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message!),
+            duration: const Duration(seconds: 1),
+          ),
+        );
+        
+        
+        if(!status.isEmpty && status.contains("success")) {
+
+          var user = res['user'];
+          String firstname = user['firstname'];
+          String lastname  = user['lastname'];
+          String email     = user['email'];
+          String mobile    = user['mobile'];
+          int userId       = user['id'];
+
+          await prefs.clear();
+          prefs.setString("token", token);
+          prefs.setString("user_firstname", firstname);
+          prefs.setString("user_lastname", lastname);
+          prefs.setString("user_email", email);
+          Navigator.pushNamedAndRemoveUntil(context, Homepage.name, (_) => false);
+        } else {
+          print("PRoblem");
+        }
+
+        
+      } else {
+        print("Error: ${response.statusCode}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: ${response.statusCode}")),
+        );
+      }
+    } catch (e) {
+      print("Exception: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Exception: $e")));
+    }
   }
 
 }

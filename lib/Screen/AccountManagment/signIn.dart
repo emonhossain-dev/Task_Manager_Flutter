@@ -1,9 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:task_manager/Screen/AccountManagment/Forget_password/forgetByEmail.dart';
 import 'package:task_manager/Screen/AccountManagment/signUp.dart';
 import 'package:task_manager/Screen/MainScreen/homepage.dart';
 
+import '../../util/textFieldErrorCheck.dart';
 import '../Widget/main_bg_sceen.dart';
 
 class SingIn extends StatefulWidget {
@@ -15,8 +17,17 @@ class SingIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SingIn> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+
+
+  String? _emailError;
+  String? _PasswordError;
+
+  final TextFieldErrorCheck _validator = TextFieldErrorCheck();
+
+
+
+  final TextEditingController _emailControllers = TextEditingController();
+  final TextEditingController _passwordControllers = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -44,10 +55,16 @@ class _SignInState extends State<SingIn> {
                         ),
                         SizedBox(height: 20),
                         TextFormField(
-                          controller: _emailController,
+                          controller: _emailControllers,
                           keyboardType: TextInputType.emailAddress,
+                          onChanged: (value) {
+                            _emailError = _validator.validate(value, "email");
+                            setState(() {
+                            });
+                          },
                           decoration: InputDecoration(
                             hintText: "Email",
+                            errorText: _emailError,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -57,10 +74,16 @@ class _SignInState extends State<SingIn> {
                         ),
                         SizedBox(height: 20),
                         TextFormField(
-                          controller: _passwordController,
+                          controller: _passwordControllers,
                           keyboardType: TextInputType.text,
+                          onChanged: (value) {
+                            _PasswordError = _validator.validate(value, "password");
+                            setState(() {
+                            });
+                          },
                           decoration: InputDecoration(
                             hintText: "Password",
+                            errorText: _PasswordError,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -79,7 +102,7 @@ class _SignInState extends State<SingIn> {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.pushNamedAndRemoveUntil(context, Homepage.name, (_) => false);
+                            _nullCheckAndButtonClick();
                           },
                           child: Icon(Icons.navigate_next, color: Colors.white),
                         ),
@@ -127,8 +150,41 @@ class _SignInState extends State<SingIn> {
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    _emailControllers.dispose();
+    _passwordControllers.dispose();
     super.dispose();
   }
+
+
+  void _nullCheckAndButtonClick() {
+    setState(() {
+      _emailError = _validator.validate(_emailControllers.text, "email");
+      _PasswordError = _validator.validate(_passwordControllers.text, "password");
+    });
+
+    if (_emailError == null && _PasswordError == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("OKAY"), backgroundColor: Colors.green),
+      );
+    }
+  }
+
+  /// More examples see https://github.com/cfug/dio/tree/main/dio#examples
+  void _logingRequest() async {
+    final dio = Dio();
+
+    Map<String,String> header = {
+      "Authorization": "Bearer ",
+      "Content-Type": "application/json",
+    };
+
+    Map<String, dynamic> body = {
+
+    };
+
+
+
+  }
+
+
 }

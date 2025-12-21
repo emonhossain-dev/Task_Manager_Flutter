@@ -1,15 +1,26 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_manager/Screen/Widget/appbar.dart';
 
+import '../../Api Integration/Base_url.dart';
 import '../Widget/main_bg_sceen.dart';
 import 'homepage.dart';
 
-class AddNewData extends StatelessWidget {
+class AddNewData extends StatefulWidget {
   AddNewData({super.key});
 
   static const String name = "/add-new-data";
-  final TextEditingController _subjectController = TextEditingController();
-  final TextEditingController _discribtionController = TextEditingController();
+
+  @override
+  State<AddNewData> createState() => _AddNewDataState();
+}
+
+class _AddNewDataState extends State<AddNewData> {
+  final TextEditingController _titleController = TextEditingController();
+
+  final TextEditingController _descriptionController = TextEditingController();
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -38,10 +49,10 @@ class AddNewData extends StatelessWidget {
                         ),
                         SizedBox(height: 20),
                         TextFormField(
-                          controller: _subjectController,
+                          controller: _titleController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
-                            hintText: "Subject",
+                            hintText: "Title",
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -51,7 +62,7 @@ class AddNewData extends StatelessWidget {
                         ),
                         SizedBox(height: 20),
                         TextFormField(
-                          controller: _discribtionController,
+                          controller: _descriptionController,
                           maxLines: 6,
                           decoration: InputDecoration(
                             hintText: "Discribtion",
@@ -72,7 +83,7 @@ class AddNewData extends StatelessWidget {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.pushNamedAndRemoveUntil(context, Homepage.name, (_) => false);
+                           InsertDataRequest(context);
                           },
                           child: Icon(Icons.navigate_next, color: Colors.white),
                         ),
@@ -86,5 +97,88 @@ class AddNewData extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _titleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  void InsertDataRequest(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      print("Token not found");
+      return;
+    }
+
+    print(token);
+
+    String _titleS = _titleController.text.trim();
+    String _descriptionS = _descriptionController.text.trim();
+
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: BaseUrl().BASEURL,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        sendTimeout: const Duration(seconds: 30),
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+
+    Map<String, String> body = {
+      "title": _titleS,
+      "description": _descriptionS,
+    };
+
+    try {
+      Response response = await dio.post(
+        BaseUrl().INSERT_DATA_URL,
+        data: body,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var res = response.data; // response.data হলো পুরো JSON Map
+
+        String message = res['message'] ?? "No message"; // "Task created successfully"
+        bool success = res['success'] ?? false; // true
+
+        var data = res['data']; // data এর ভিতরের অংশ
+
+
+        if(success == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message)),);
+
+          Navigator.pushNamedAndRemoveUntil(context, Homepage.name, (_) => false);
+        }
+
+
+        print(message);
+        print(data['user_id']);
+        print(data['title']);
+        print(data['description']);
+        print(data['status']);
+        print(data['id']);
+      }
+
+
+
+
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Exception: $e")),
+      );
+    }
   }
 }

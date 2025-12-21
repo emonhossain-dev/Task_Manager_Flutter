@@ -1,8 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_manager/Screen/MainScreen/profile.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
+
+  @override
+  State<CustomAppBar> createState() => _CustomAppBarState();
+
+  // শুধু এখানেই preferredSize থাকল
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
+  String? email;
+  String? firstname;
+  String? lastname;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
+  }
+
+  void loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    email = prefs.getString("user_email") ?? "";
+    firstname = prefs.getString("user_firstname") ?? "";
+    lastname = prefs.getString("user_lastname") ?? "";
+    setState(() {
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,8 +40,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.only(left: 16.0),
         child: GestureDetector(
           onTap: () {
-            // Your action here
-            print("Avatar tapped!");
             Navigator.pushNamed(context, ProfilePage.name);
           },
           child: const CircleAvatar(
@@ -21,21 +48,22 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ),
-
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Rakibul Emon",
-            style: TextStyle(
+            firstname != null && lastname != null
+                ? "$firstname $lastname"
+                : "Loading...",
+            style: const TextStyle(
               fontSize: 18,
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
           Text(
-            "emonhossain62@gmail.com",
-            style: TextStyle(
+            email ?? "",
+            style: const TextStyle(
               fontSize: 13,
               color: Colors.white,
             ),
@@ -44,8 +72,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
+
+
+
+
 
