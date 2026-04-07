@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager/Screen/UI/Auth/Password_Reset/password_reset_otp_pin_verification.dart';
+import 'package:task_manager/Screen/UI/Auth/Password_Reset/password_reset_update_password.dart';
 import 'package:task_manager/Screen/UI/Auth/login_screen.dart';
 import 'package:task_manager/Screen/UI/splash_screen.dart';
 
+import 'Screen/UI/Auth/Password_Reset/password_reset_email_verification.dart';
+import 'Screen/UI/Auth/registration_screen.dart';
+import 'Screen/UI/bottom_nav.dart';
 import 'Utils/appColors.dart';
 
 class MyApp extends StatelessWidget {
@@ -12,6 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
 
       theme: ThemeData(
 
@@ -75,6 +81,16 @@ class MyApp extends StatelessWidget {
          widget = const SplashScreen();
        } else if (settings.name == SingIn.routeName) {
          widget = const SingIn();
+       } else if (settings.name == RegistrationScreen.routeName) {
+         widget = const RegistrationScreen();
+       } else if (settings.name == PasswordResetEmailVerification.routeName) {
+         widget = const PasswordResetEmailVerification();
+       } else if (settings.name == PasswordResetOtpPinVerification.routeName) {
+         widget = const PasswordResetOtpPinVerification();
+       } else if (settings.name == PasswordResetUpdatePassword.routeName) {
+         widget = const PasswordResetUpdatePassword();
+       } else if (settings.name == BottomNav.routeName) {
+         widget = const BottomNav();
        }
        
        return MaterialPageRoute(builder: (_) => widget);
