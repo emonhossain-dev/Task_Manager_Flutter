@@ -140,6 +140,49 @@ class _SingInState extends State<SingIn> {
     );
   }
 
+/*  Future<void> _LoginApiCalled() async{
+
+    isRegisterInProcess= true;
+    setState(() {
+    });
+
+
+
+    Map<String, dynamic> body = {
+
+      "email":_emailController.text.trim(),
+      "firstName":_firstNameController.text.trim(),
+      "lastName":_lastNameController.text.trim(),
+      "mobile":_mobileNumberController.text.trim(),
+      "password":_mobileNumberController.text.trim(),
+
+    };
+
+    final NetworkResponse response = await NetworkCaller.PostRequest(BaseURL.register_URL, body);
+
+
+    if(response.isSuccess) {
+      _clearEditText();
+      showSnackBarMessage(context, "Registration Successful");
+      Navigator.pushNamedAndRemoveUntil(context, SingIn.routeName, (route) => false);
+
+    } else {
+      showSnackBarMessage(context, response.errorMessage ?? "Registration Failed");
+    }
+
+  }
+
+  void _clearEditText(){
+
+    _emailController.clear();
+    _firstNameController.clear();
+    _lastNameController.clear();
+    _mobileNumberController.clear();
+    _passwordController.clear();
+
+
+  }*/
+
 
   @override
   void dispose() {

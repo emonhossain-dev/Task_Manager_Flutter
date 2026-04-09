@@ -6,6 +6,8 @@ import 'package:task_manager/Screen/UI/splash_screen.dart';
 
 import 'Screen/UI/Auth/Password_Reset/password_reset_email_verification.dart';
 import 'Screen/UI/Auth/registration_screen.dart';
+import 'Screen/UI/Main_Screen/insert_task.dart';
+import 'Screen/UI/Main_Screen/update_screen.dart';
 import 'Screen/UI/bottom_nav.dart';
 import 'Utils/appColors.dart';
 
@@ -91,6 +93,10 @@ class MyApp extends StatelessWidget {
          widget = const PasswordResetUpdatePassword();
        } else if (settings.name == BottomNav.routeName) {
          widget = const BottomNav();
+       } else if (settings.name == UpdateScreen.routeName) {
+         widget = const UpdateScreen();
+       } else if (settings.name == InsertTask.routeName) {
+         widget = const InsertTask();
        }
        
        return MaterialPageRoute(builder: (_) => widget);

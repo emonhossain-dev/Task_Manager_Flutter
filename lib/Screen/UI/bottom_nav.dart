@@ -5,6 +5,8 @@ import 'package:task_manager/Screen/UI/Main_Screen/complete_screen.dart';
 import 'package:task_manager/Screen/UI/Main_Screen/progress_screen.dart';
 import 'package:task_manager/Utils/appColors.dart';
 
+import '../Widget/app_bar.dart';
+
 class BottomNav extends StatefulWidget {
   const BottomNav({super.key});
 
@@ -16,8 +18,6 @@ class BottomNav extends StatefulWidget {
 
 class _BottomNavState extends State<BottomNav> {
   List<Widget> _screens = [
-
-
     AddScreen(),
     CompleteScreen(),
     CancelScreen(),
@@ -25,11 +25,12 @@ class _BottomNavState extends State<BottomNav> {
   ];
   int _selectedIndex = 0;
 
-
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
-      appBar: AppBar(title: Text("Name"), backgroundColor: AppColors.app_color,),
+      appBar: Appbar(),
 
       body: _screens[_selectedIndex],
 
@@ -37,17 +38,30 @@ class _BottomNavState extends State<BottomNav> {
         selectedIndex: _selectedIndex,
         onDestinationSelected: (index) {
           _selectedIndex = index;
-          setState(() {
-          });
+          setState(() {});
         },
 
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.add_box_outlined), label: "New Task"),
-          NavigationDestination(icon: Icon(Icons.incomplete_circle), label: "Complete"),
-          NavigationDestination(icon: Icon(Icons.cancel_presentation), label: "Cancel"),
-          NavigationDestination(icon: Icon(Icons.incomplete_circle), label: "Progress"),
+          NavigationDestination(
+            icon: Icon(Icons.add_box_outlined),
+            label: "New Task",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.incomplete_circle),
+            label: "Complete",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.cancel_presentation),
+            label: "Cancel",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.incomplete_circle),
+            label: "Progress",
+          ),
         ],
       ),
     );
   }
 }
+
+

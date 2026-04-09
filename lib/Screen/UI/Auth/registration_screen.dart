@@ -1,8 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:task_manager/Network/base_url.dart';
+import 'package:task_manager/Network/services/network_caller.dart';
 import 'package:task_manager/Screen/UI/Auth/login_screen.dart';
 
 import '../../../Utils/appColors.dart';
+import '../../../Utils/snack_bar_message.dart';
 import '../../Widget/backgroud_widget.dart';
 import 'Password_Reset/password_reset_email_verification.dart';
 
@@ -24,6 +28,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _mobileNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool isRegisterInProcess = false;
 
 
   @override
@@ -126,15 +131,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     SizedBox(height: 20),
 
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
+                    Visibility(
+                      visible: !isRegisterInProcess,
+                      replacement: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _RegisterApiCalled();
+                          }
+                        },
 
-                        }
-                      },
 
-
-                      child: Icon(Icons.arrow_circle_right_outlined),
+                        child: Icon(Icons.arrow_circle_right_outlined),
+                      ),
                     ),
 
                     SizedBox(height: 20),
@@ -173,6 +184,57 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ),
     );
   }
+
+
+
+  Future<void> _RegisterApiCalled() async{
+
+    isRegisterInProcess= true;
+    setState(() {
+    });
+
+
+
+    Map<String, dynamic> body = {
+
+        "email":_emailController.text.trim(),
+        "firstName":_firstNameController.text.trim(),
+        "lastName":_lastNameController.text.trim(),
+        "mobile":_mobileNumberController.text.trim(),
+        "password":_mobileNumberController.text.trim(),
+
+    };
+
+    final NetworkResponse response = await NetworkCaller.PostRequest(BaseURL.register_URL, body);
+
+
+    if(response.isSuccess) {
+      _clearEditText();
+      showSnackBarMessage(context, "Registration Successful");
+      Navigator.pushNamedAndRemoveUntil(context, SingIn.routeName, (route) => false);
+
+    } else {
+      isRegisterInProcess= false;
+      setState(() {
+      });
+      showSnackBarMessage(context, response.errorMessage ?? "Registration Failed");
+    }
+
+  }
+
+
+  void _clearEditText(){
+
+    _emailController.clear();
+    _firstNameController.clear();
+    _lastNameController.clear();
+    _mobileNumberController.clear();
+    _passwordController.clear();
+
+
+  }
+
+
 
   @override
   void dispose() {
